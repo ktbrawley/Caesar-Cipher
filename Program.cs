@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Caesar_Cipher.Services;
+using System;
 
 namespace Caesar_Cipher
 {
-    class Program
+    internal class Program
     {
-        static char[] alphabet = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-
             Console.WriteLine("===================================================");
             Console.WriteLine("===================CAESAR-CRYPT====================");
             Console.WriteLine("===================================================\n");
@@ -21,8 +20,6 @@ namespace Caesar_Cipher
                     Console.WriteLine("\n===================================================");
                 }
                 while (tryAgain);
-
-
             }
             catch (Exception ex)
             {
@@ -31,10 +28,13 @@ namespace Caesar_Cipher
             return;
         }
 
-        static void StartProgram(out bool tryAgain)
+        private static void StartProgram(out bool tryAgain)
         {
             var choice = 0;
             var userInput = string.Empty;
+
+            var encryptionService = new EncryptionService();
+
             do
             {
                 Console.WriteLine("\nPlease select an action you'd like to perform: \n1) Encrypt a message \n2) Decrypt a message");
@@ -55,10 +55,11 @@ namespace Caesar_Cipher
             switch (choice)
             {
                 case 1:
-                    message = EncryptMessage(message);
+                    message = encryptionService.EncryptMessage(message);
                     break;
+
                 case 2:
-                    message = DecryptMessage(message);
+                    message = encryptionService.DecryptMessage(message);
                     break;
             }
 
@@ -67,50 +68,7 @@ namespace Caesar_Cipher
             tryAgain = (Console.ReadLine().Trim().ToLower() == "y");
         }
 
-        static string EncryptMessage(string msg)
-        {
-            var secretMsg = msg.ToCharArray();
-            for (int i = 0; i < secretMsg.Length; i++)
-            {
-                var num = 0;
-                if (Int32.TryParse(secretMsg[i].ToString(), out num) || secretMsg[i] == ' ')
-                {
-                    continue;
-                }
-                var newCharacterIndex = Array.IndexOf(alphabet, secretMsg[i]) + 3;
-                if (newCharacterIndex >= alphabet.Length)
-                {
-                    newCharacterIndex -= alphabet.Length;
-                }
-                secretMsg[i] = alphabet[newCharacterIndex];
-            }
-            return String.Join("", secretMsg);
-        }
-
-        static string DecryptMessage(string msg)
-        {
-            var secretMsg = msg.ToCharArray();
-         
-            for (int i = 0; i < secretMsg.Length; i++)
-            {
-                var num = 0;
-                if (Int32.TryParse(secretMsg[i].ToString(), out num) || secretMsg[i] == ' ')
-                {
-                    continue;
-                }
-
-                var newCharacterIndex = Array.IndexOf(alphabet, secretMsg[i]) - 3;
-                if (newCharacterIndex < 0)
-                {
-                    newCharacterIndex += alphabet.Length;
-                }
-                secretMsg[i] = alphabet[newCharacterIndex];
-            }
-            return String.Join("", secretMsg);
-        }
-
-
-        static string FormatMessage(string msg)
+        private static string FormatMessage(string msg)
         {
             var chars = msg.ToCharArray();
             chars[0] = chars[0].ToString().ToUpper().ToCharArray()[0];
