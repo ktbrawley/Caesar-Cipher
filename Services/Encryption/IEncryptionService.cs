@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Caesar_Cipher.Models;
 
 namespace Caesar_Cipher.Services.Encryption
 {
     public interface IEncryptionService
     {
-        string DecryptMessage(string msg);
+        bool DecryptMessage(EncryptionAction action);
 
-        string EncryptMessage(string msg);
+        bool EncryptMessage(EncryptionAction action);
     }
 }

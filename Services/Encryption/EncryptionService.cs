@@ -1,4 +1,5 @@
-﻿using Caesar_Cipher.Services.IO;
+﻿using Caesar_Cipher.Models;
+using Caesar_Cipher.Services.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,16 @@ namespace Caesar_Cipher.Services.Encryption
 
         private static char[] specialChars = new char[] { '?', '!', '^', '%', '*', '(', ')', '&', '$' };
 
-        public string DecryptMessage(string msg)
+        private readonly FileService _fileService;
+
+        public EncryptionService()
         {
+            _fileService = new FileService();
+        }
+
+        public bool DecryptMessage(EncryptionAction action)
+        {
+            var msg = RetrieveMessageForProcessing(action);
             var secretMsg = msg.ToCharArray();
 
             for (int i = 0; i < secretMsg.Length; i++)
@@ -32,12 +41,16 @@ namespace Caesar_Cipher.Services.Encryption
                 }
                 secretMsg[i] = isUpperCase ? char.ToUpper(alphabet[newCharacterIndex]) : alphabet[newCharacterIndex];
             }
-            return String.Join("", secretMsg);
+
+            OutputTransformedMessage(action, string.Join("", secretMsg));
+            return true;
         }
 
-        public string EncryptMessage(string msg)
+        public bool EncryptMessage(EncryptionAction action)
         {
+            var msg = RetrieveMessageForProcessing(action);
             var secretMsg = msg.ToCharArray();
+
             for (int i = 0; i < secretMsg.Length; i++)
             {
                 var isUpperCase = IsUpperCase(secretMsg[i]);
@@ -53,7 +66,52 @@ namespace Caesar_Cipher.Services.Encryption
                 }
                 secretMsg[i] = isUpperCase ? char.ToUpper(alphabet[newCharacterIndex]) : alphabet[newCharacterIndex];
             }
-            return String.Join("", secretMsg);
+            OutputTransformedMessage(action, string.Join("", secretMsg));
+            return true;
+        }
+
+        private string RetrieveMessageForProcessing(EncryptionAction encryptionAction)
+        {
+            var message = string.Empty;
+
+            switch (encryptionAction.Method)
+            {
+                case ProcessingMethod.Console:
+                    Console.WriteLine("\nThank you!\nPlease enter your message:");
+
+                    message = Console.ReadLine();
+                    while (String.IsNullOrEmpty(message.TrimStart().TrimEnd()))
+                    {
+                        var action = encryptionAction.Choice == 1 ? "encrypt" : "decrypt";
+                        Console.WriteLine($"Invalid input. Please enter the message you'd like to {action}.");
+                        message = Console.ReadLine();
+                    }
+                    break;
+
+                case ProcessingMethod.File:
+                    Console.WriteLine("Reading file contents...");
+                    message = _fileService.ReadFileContents();
+                    break;
+            }
+
+            return message;
+        }
+
+        private string OutputTransformedMessage(EncryptionAction encryptionAction, string message)
+        {
+            switch (encryptionAction.Method)
+            {
+                case ProcessingMethod.Console:
+                    Console.WriteLine($"\nYour message is: {FormatMessage(message)}");
+                    break;
+
+                case ProcessingMethod.File:
+                    Console.WriteLine("Writing transformed message to contents...");
+                    _fileService.WriteContentsToFile(message);
+                    break;
+            }
+
+            return message;
         }
 
         private bool IsNotAlphaChar(char secretMsgChar)
@@ -64,6 +122,13 @@ namespace Caesar_Cipher.Services.Encryption
         private bool IsUpperCase(char secretMsgChar)
         {
             return secretMsgChar == char.ToUpper(secretMsgChar);
+        }
+
+        private static string FormatMessage(string msg)
+        {
+            var chars = msg.ToCharArray();
+            chars[0] = chars[0].ToString().ToUpper().ToCharArray()[0];
+            return String.Join("", chars);
         }
     }
 }

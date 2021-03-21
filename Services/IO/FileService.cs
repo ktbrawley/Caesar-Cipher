@@ -19,7 +19,7 @@ namespace Caesar_Cipher.Services.IO
             _defaultFilePath = _config["FileToEncryptPath"];
         }
 
-        public string ExtractFileContents(string filePath = "")
+        public string ReadFileContents(string filePath = "")
         {
             if (string.IsNullOrEmpty(filePath))
             {

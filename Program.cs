@@ -1,4 +1,5 @@
 ﻿using System;
+using Caesar_Cipher.Models;
 using Caesar_Cipher.Services.Encryption;
 using Caesar_Cipher.Services.IO;
 
@@ -31,10 +32,30 @@ namespace Caesar_Cipher
 
         private static void StartProgram(out bool tryAgain)
         {
-            var choice = 0;
-            var userInput = string.Empty;
-
             var encryptionService = new EncryptionService();
+
+            var userInput = ConfirmUserAction();
+
+            switch (userInput.Choice)
+            {
+                case 1:
+                    encryptionService.EncryptMessage(userInput);
+                    break;
+
+                case 2:
+                    encryptionService.DecryptMessage(userInput);
+                    break;
+            }
+
+            Console.WriteLine("\nWould you like to perform another action? (y/n)");
+            tryAgain = (Console.ReadLine().Trim().ToLower() == "y");
+        }
+
+        private static EncryptionAction ConfirmUserAction()
+        {
+            var choice = 0;
+            var outputMethod = 0;
+            var userInput = string.Empty;
 
             do
             {
@@ -44,67 +65,19 @@ namespace Caesar_Cipher
             }
             while (!(choice == 1 || choice == 2));
 
-            Console.WriteLine("\nThank you!\nPlease enter your message:");
-            var message = Console.ReadLine();
-            while (String.IsNullOrEmpty(message.TrimStart().TrimEnd()))
-            {
-                var action = choice == 1 ? "encrypt" : "decrypt";
-                Console.WriteLine($"Invalid input. Please enter the message you'd like to {action}.");
-                message = Console.ReadLine();
-            }
-
-            var outputToFile = 0;
-
             do
             {
-                Console.WriteLine("\nHow would you like display the result of your action: \n1) Output on screen \n2) Output to file");
+                Console.WriteLine("\nWould you like to perform chosen action: \n1) In the console \n2) In a text file");
                 userInput = Console.ReadLine();
-                var successful = Int32.TryParse(userInput, out outputToFile);
+                var successful = Int32.TryParse(userInput, out outputMethod);
             }
-            while (!(outputToFile == 1 || outputToFile == 2));
+            while (!(outputMethod == 1 || outputMethod == 2));
 
-            switch (choice)
-            {
-                case 1:
-                    message = encryptionService.EncryptMessage(message);
-                    break;
-
-                case 2:
-                    message = encryptionService.DecryptMessage(message);
-                    break;
-            }
-
-            GenerateMessage((OutputMethod)outputToFile, message);
-
-            Console.WriteLine("\nWould you like to perform another action? (y/n)");
-            tryAgain = (Console.ReadLine().Trim().ToLower() == "y");
-        }
-
-        private static string FormatMessage(string msg)
-        {
-            var chars = msg.ToCharArray();
-            chars[0] = chars[0].ToString().ToUpper().ToCharArray()[0];
-            return String.Join("", chars);
-        }
-
-        private static void GenerateMessage(OutputMethod method, string message)
-        {
-            var fileService = new FileService();
-
-            switch (method)
-            {
-                case OutputMethod.Console:
-                    Console.WriteLine($"\nYour message is: {FormatMessage(message)}");
-                    break;
-
-                case OutputMethod.File:
-                    fileService.WriteContentsToFile(message);
-                    break;
-            }
+            return new EncryptionAction { Choice = choice, Method = (ProcessingMethod)outputMethod };
         }
     }
 
-    public enum OutputMethod
+    public enum ProcessingMethod
     {
         Console = 1,
         File = 2

@@ -8,6 +8,6 @@ namespace Caesar_Cipher.Services.IO
 {
     public interface IFileReader
     {
-        string ExtractFileContents(string filePath);
+        string ReadFileContents(string filePath);
     }
 }
