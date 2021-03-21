@@ -38,11 +38,11 @@ namespace Caesar_Cipher
 
             switch (userInput.Choice)
             {
-                case 1:
+                case TransformMethod.Encrypt:
                     encryptionService.EncryptMessage(userInput);
                     break;
 
-                case 2:
+                case TransformMethod.Decrypt:
                     encryptionService.DecryptMessage(userInput);
                     break;
             }
@@ -73,7 +73,7 @@ namespace Caesar_Cipher
             }
             while (!(outputMethod == 1 || outputMethod == 2));
 
-            return new EncryptionAction { Choice = choice, Method = (ProcessingMethod)outputMethod };
+            return new EncryptionAction { Choice = (TransformMethod)choice, Method = (ProcessingMethod)outputMethod };
         }
     }
 
@@ -81,5 +81,11 @@ namespace Caesar_Cipher
     {
         Console = 1,
         File = 2
+    }
+
+    public enum TransformMethod
+    {
+        Encrypt = 1,
+        Decrypt = 2
     }
 }

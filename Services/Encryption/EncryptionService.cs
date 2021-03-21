@@ -28,8 +28,8 @@ namespace Caesar_Cipher.Services.Encryption
 
             for (int i = 0; i < secretMsg.Length; i++)
             {
-                var isUpperCase = IsUpperCase(secretMsg[i]);
-                if (IsNotAlphaChar(secretMsg[i]))
+                var isUpperCase = Utils.IsUpperCase(secretMsg[i]);
+                if (Utils.IsNotAlphaChar(alphabet, secretMsg[i]))
                 {
                     continue;
                 }
@@ -53,9 +53,9 @@ namespace Caesar_Cipher.Services.Encryption
 
             for (int i = 0; i < secretMsg.Length; i++)
             {
-                var isUpperCase = IsUpperCase(secretMsg[i]);
+                var isUpperCase = Utils.IsUpperCase(secretMsg[i]);
 
-                if (IsNotAlphaChar(secretMsg[i]))
+                if (Utils.IsNotAlphaChar(alphabet, secretMsg[i]))
                 {
                     continue;
                 }
@@ -82,7 +82,7 @@ namespace Caesar_Cipher.Services.Encryption
                     message = Console.ReadLine();
                     while (String.IsNullOrEmpty(message.TrimStart().TrimEnd()))
                     {
-                        var action = encryptionAction.Choice == 1 ? "encrypt" : "decrypt";
+                        var action = Enum.GetName(encryptionAction.Choice);
                         Console.WriteLine($"Invalid input. Please enter the message you'd like to {action}.");
                         message = Console.ReadLine();
                     }
@@ -102,7 +102,7 @@ namespace Caesar_Cipher.Services.Encryption
             switch (encryptionAction.Method)
             {
                 case ProcessingMethod.Console:
-                    Console.WriteLine($"\nYour message is: {FormatMessage(message)}");
+                    Console.WriteLine($"\nYour message is: {Utils.FormatMessage(message)}");
                     break;
 
                 case ProcessingMethod.File:
@@ -112,23 +112,6 @@ namespace Caesar_Cipher.Services.Encryption
             }
 
             return message;
-        }
-
-        private bool IsNotAlphaChar(char secretMsgChar)
-        {
-            return !alphabet.Any(x => x.ToString().ToLower() == secretMsgChar.ToString().ToLower());
-        }
-
-        private bool IsUpperCase(char secretMsgChar)
-        {
-            return secretMsgChar == char.ToUpper(secretMsgChar);
-        }
-
-        private static string FormatMessage(string msg)
-        {
-            var chars = msg.ToCharArray();
-            chars[0] = chars[0].ToString().ToUpper().ToCharArray()[0];
-            return String.Join("", chars);
         }
     }
 }

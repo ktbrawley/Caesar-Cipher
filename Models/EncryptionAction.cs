@@ -8,7 +8,7 @@ namespace Caesar_Cipher.Models
 {
     public class EncryptionAction
     {
-        public int Choice { get; set; }
+        public TransformMethod Choice { get; set; }
         public ProcessingMethod Method { get; set; }
     }
 }
