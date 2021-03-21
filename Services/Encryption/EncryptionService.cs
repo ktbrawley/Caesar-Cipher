@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Caesar_Cipher.Services.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Caesar_Cipher.Services
+namespace Caesar_Cipher.Services.Encryption
 {
     public class EncryptionService : IEncryptionService
     {

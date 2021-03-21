@@ -1,5 +1,6 @@
-﻿using Caesar_Cipher.Services;
-using System;
+﻿using System;
+using Caesar_Cipher.Services.Encryption;
+using Caesar_Cipher.Services.IO;
 
 namespace Caesar_Cipher
 {
@@ -52,6 +53,16 @@ namespace Caesar_Cipher
                 message = Console.ReadLine();
             }
 
+            var outputToFile = 0;
+
+            do
+            {
+                Console.WriteLine("\nHow would you like display the result of your action: \n1) Output on screen \n2) Output to file");
+                userInput = Console.ReadLine();
+                var successful = Int32.TryParse(userInput, out outputToFile);
+            }
+            while (!(outputToFile == 1 || outputToFile == 2));
+
             switch (choice)
             {
                 case 1:
@@ -63,7 +74,8 @@ namespace Caesar_Cipher
                     break;
             }
 
-            Console.WriteLine($"\nYour message is: {FormatMessage(message)}");
+            GenerateMessage((OutputMethod)outputToFile, message);
+
             Console.WriteLine("\nWould you like to perform another action? (y/n)");
             tryAgain = (Console.ReadLine().Trim().ToLower() == "y");
         }
@@ -74,5 +86,27 @@ namespace Caesar_Cipher
             chars[0] = chars[0].ToString().ToUpper().ToCharArray()[0];
             return String.Join("", chars);
         }
+
+        private static void GenerateMessage(OutputMethod method, string message)
+        {
+            var fileService = new FileService();
+
+            switch (method)
+            {
+                case OutputMethod.Console:
+                    Console.WriteLine($"\nYour message is: {FormatMessage(message)}");
+                    break;
+
+                case OutputMethod.File:
+                    fileService.WriteContentsToFile(message);
+                    break;
+            }
+        }
+    }
+
+    public enum OutputMethod
+    {
+        Console = 1,
+        File = 2
     }
 }
